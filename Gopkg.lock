@@ -200,6 +200,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:bfd957255a80a23af53f514cbaa5f16061df295e37234b5e0935cf49d2cca650"
+  name = "golang.org/x/crypto"
+  packages = [
+    "cast5",
+    "openpgp",
+    "openpgp/armor",
+    "openpgp/elgamal",
+    "openpgp/errors",
+    "openpgp/packet",
+    "openpgp/s2k",
+  ]
+  pruneopts = "UT"
+  revision = "e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa"
+
+[[projects]]
+  branch = "master"
   digest = "1:d6b719875cf8091fbab38527d81d34e71f4521b9ee9ccfbd4a32cff2ac5af96e"
   name = "golang.org/x/net"
   packages = [
@@ -277,6 +293,7 @@
     "github.com/spf13/viper",
     "github.com/stretchr/testify/assert",
     "go.uber.org/zap",
+    "golang.org/x/crypto/openpgp",
     "golang.org/x/oauth2",
   ]
   solver-name = "gps-cdcl"

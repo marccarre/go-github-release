@@ -30,16 +30,26 @@ var gpgPrivKey string
 var draft bool
 
 func init() {
+	zapLogger := logging.MustZapLogger()
+	defer zapLogger.Sync() // Flushes buffer, if any.
+	log := zapLogger.Sugar()
+
 	releaseCmd.Flags().StringVarP(&owner, "owner", "o", "", "GitHub owner, e.g. marccarre in github.com/marccarre/go-github-release")
-	releaseCmd.MarkFlagRequired("owner")
+	mustMarkFlagRequired(log, "owner")
 	releaseCmd.Flags().StringVarP(&repo, "repo", "r", "", "GitHub repository, e.g. go-github-release in github.com/marccarre/go-github-release")
-	releaseCmd.MarkFlagRequired("repo")
+	mustMarkFlagRequired(log, "repo")
 	releaseCmd.Flags().StringVarP(&tag, "tag", "t", "", "Git tag corresponding to the release to perform, e.g. v1.0.0")
-	releaseCmd.MarkFlagRequired("tag")
+	mustMarkFlagRequired(log, "tag")
 	releaseCmd.Flags().StringVarP(&gpgPrivKey, "key", "k", "", "Path to the private GPG key to use to sign the release assets")
-	releaseCmd.MarkFlagRequired("key")
+	mustMarkFlagRequired(log, "key")
 	releaseCmd.Flags().BoolVarP(&draft, "draft", "d", true, "Should the release be a draft release, default: true")
 	rootCmd.AddCommand(releaseCmd)
+}
+
+func mustMarkFlagRequired(log *zap.SugaredLogger, flag string) {
+	if err := releaseCmd.MarkFlagRequired(flag); err != nil {
+		log.Fatalw("failed to mark flag as required", "flag", flag, "error", err)
+	}
 }
 
 const (

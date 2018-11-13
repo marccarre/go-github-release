@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    machine:
+      docker_layer_caching: true  # faster builds
+    working_directory: ~/go/src/github.com/marccarre/go-github-release
+    steps:
+      - checkout
+      - run: |
+          make lint
+      - run: |
+          make build
+      - run: |
+          make \
+            CI=$CI \
+            COVERALLS_TOKEN=$COVERALLS_TOKEN \
+            CODECOV_TOKEN=$CODECOV_TOKEN \
+            test
+      - run: |
+          docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
+          make docker-build
+          make docker-push

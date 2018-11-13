@@ -3,6 +3,7 @@ package gpg
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"golang.org/x/crypto/openpgp"
 	"golang.org/x/crypto/openpgp/packet"
@@ -17,7 +18,7 @@ type Signer struct {
 // If the private key is encrypted, the provided (optional) password will be
 // used to decrypt the private key.
 func NewSigner(privateKeyPath, password string) (*Signer, error) {
-	key, err := os.Open(privateKeyPath)
+	key, err := os.Open(filepath.Clean(privateKeyPath))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open GPG private key: %s", err)
 	}
@@ -38,13 +39,13 @@ func NewSigner(privateKeyPath, password string) (*Signer, error) {
 
 // ArmoredDetachSign generates an armored signature of the provided file, as a
 // separate file, and returns the path to the signature file.
-func (s Signer) ArmoredDetachSign(filepath string) (string, error) {
-	r, err := os.Open(filepath)
+func (s Signer) ArmoredDetachSign(filePath string) (string, error) {
+	r, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		return "", err
 	}
 	defer r.Close()
-	signaturePath := filepath + ".asc"
+	signaturePath := filePath + ".asc"
 	w, err := os.OpenFile(signaturePath, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		return "", err

@@ -46,7 +46,7 @@ func (s Signer) ArmoredDetachSign(filePath string) (string, error) {
 	}
 	defer r.Close()
 	signaturePath := filePath + ".asc"
-	w, err := os.OpenFile(signaturePath, os.O_WRONLY|os.O_CREATE, 0755)
+	w, err := os.OpenFile(signaturePath, os.O_WRONLY|os.O_CREATE, 0644) // #nosec: creating a signature file, nothing confidential in it. Fixes "Expect file permissions to be 0600 or less,MEDIUM,HIGH (gosec)"
 	if err != nil {
 		return "", err
 	}

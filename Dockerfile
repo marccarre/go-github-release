@@ -66,7 +66,7 @@ ARG VERSION
 RUN CGO_ENABLED=0 GOARCH=amd64 go build \
     -tags netgo -ldflags \
     "-w -extldflags '-static' -X github.com/marccarre/go-github-release/pkg/version.Version=${VERSION}" \
-    -o ghrelease-${VERSION}-${GOOS} cmd/github-release/github-release.go
+    -o ghrelease-${VERSION}-${GOOS} cmd/ghrelease/ghrelease.go
 
 # ------------------------------------------------------------------------- test
 FROM build AS test

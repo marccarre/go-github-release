@@ -43,7 +43,7 @@ func init() {
 }
 
 const (
-	envGithubToken = "GITHUB_API_TOKEN"
+	envGithubToken = "GITHUB_API_TOKEN" // #nosec: environment variable's name. Fixes "Potential hardcoded credentials,HIGH,LOW (gosec)"
 	envGPGPassword = "GPG_PASSWD"
 )
 

@@ -38,15 +38,6 @@ WORKDIR /go/src/github.com/marccarre/go-github-release
 # Install all dependencies:
 RUN dep ensure -vendor-only
 
-# ------------------------------------------------------------------------- lint
-FROM setup AS lint
-
-# Copy project. This layer will be rebuilt when ever a file has changed in the project directory
-COPY . /go/src/github.com/marccarre/go-github-release
-
-RUN find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \; && \
-    gometalinter $(go list ./...)
-
 # ------------------------------------------------------------------------ build
 FROM setup AS build
 
@@ -86,6 +77,15 @@ RUN if [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && [ ! -z "$CODECOV_TO
     -service=circle-ci -repotoken=$COVERALLS_TOKEN ; \
     curl -fsSLo codecov.sh https://codecov.io/bash ; chmod +x codecov.sh ; ./codecov.sh -t $CODECOV_TOKEN ; else \
     echo "Skipped upload of code coverage." ; fi
+
+# ------------------------------------------------------------------------- lint
+FROM setup AS lint
+
+# Copy project. This layer will be rebuilt when ever a file has changed in the project directory
+COPY . /go/src/github.com/marccarre/go-github-release
+
+RUN find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \; && \
+    gometalinter $(go list ./...)
 
 # ---------------------------------------------------------------------- runtime
 FROM scratch

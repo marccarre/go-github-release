@@ -11,8 +11,6 @@ jobs:
     steps:
       - checkout
       - run: |
-          make lint
-      - run: |
           make build
       - persist_to_workspace:
           root: ./bin
@@ -24,6 +22,8 @@ jobs:
             COVERALLS_TOKEN=$COVERALLS_TOKEN \
             CODECOV_TOKEN=$CODECOV_TOKEN \
             test
+      - run: |
+          make lint
       - run: |
           docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
           make docker-build

@@ -1,15 +1,23 @@
 version: 2
+
+defaults: &defaults
+  machine:
+    docker_layer_caching: true  # faster builds
+  working_directory: ~/go/src/github.com/marccarre/go-github-release
+
 jobs:
   build:
-    machine:
-      docker_layer_caching: true  # faster builds
-    working_directory: ~/go/src/github.com/marccarre/go-github-release
+    <<: *defaults
     steps:
       - checkout
       - run: |
           make lint
       - run: |
           make build
+      - persist_to_workspace:
+          root: ./bin
+          paths:
+            - ghrelease-*
       - run: |
           make \
             CI=$CI \
@@ -20,3 +28,35 @@ jobs:
           docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
           make docker-build
           make docker-push
+  release:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ./bin
+      - run: |
+          mkdir -p ~/.gpg && chmod 700 ~/.gpg
+          echo -n "${BASE64_ENCODED_GPG_PRIVATE_KEY}" | base64 -d > ~/.gpg/private.asc
+          ./bin/ghrelease-${CIRCLE_TAG}-linux \
+              release \
+              -o marccarre \
+              -r go-github-release \
+              -t ${CIRCLE_TAG} \
+              -k ~/.gpg/private.asc \
+              ./bin/ghrelease-*
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - build:
+          filters:  # required since `release` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

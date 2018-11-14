@@ -127,17 +127,18 @@ func mustSignReleaseAsset(log *zap.SugaredLogger, signer *gpg.Signer, filePath s
 }
 
 func mustUploadReleaseAsset(ctx context.Context, log *zap.SugaredLogger, client *github.Client, filePath string, release *github.RepositoryRelease) {
-	log.Infow("uploading release asset", "file", filepath.Base(filePath), "release", release.Name)
+	fileName := filepath.Base(filePath)
+	log.Infow("uploading release asset", "file", fileName, "path", filePath, "release", release.Name)
 	file, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
-		log.Fatalw("failed to open file", "file", filepath.Base(filePath), "error", err)
+		log.Fatalw("failed to open file", "file", fileName, "path", filePath, "error", err)
 	}
 	defer file.Close()
 	asset, _, err := client.Repositories.UploadReleaseAsset(ctx, owner, repo, *release.ID, &github.UploadOptions{
-		Name: file.Name(),
+		Name: fileName,
 	}, file)
 	if err != nil {
-		log.Fatalw("failed to upload release asset", "file", file.Name(), "error", err)
+		log.Fatalw("failed to upload release asset", "file", fileName, "path", filePath, "error", err)
 	}
-	log.Infow("successfully uploaded release asset", "file", file.Name(), "release", release.Name, "asset", asset.Name)
+	log.Infow("successfully uploaded release asset", "file", fileName, "path", filePath, "release", release.Name, "asset", asset.Name)
 }

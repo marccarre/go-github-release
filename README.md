@@ -121,3 +121,10 @@ make lint
 ```console
 make test
 ```
+
+### Release
+
+```console
+git tag vX.Y.Z <commit-hash> -a -m vX.Y.Z
+git push --tags
+```

@@ -15,7 +15,7 @@
 
 ## Installation
 
-1. Download the latest version of `ghrelease` and its signature.
+1. Download the [latest version](https://github.com/marccarre/go-github-release/releases/latest) of `ghrelease` and its signature.
 2. [Optional] Verify `ghrelease`'s signature:
 
     1. Import my CI/CD GPG key:

@@ -63,6 +63,15 @@
       sig          6A74FEA692A05461 2018-11-11  Marc CARRE (GitHub software releases) <carre.marc@gmail.com>
       ```
 
+    5. Check `ghrelease` against its detached signature, e.g.:
+
+      ```console
+      $ gpg --verify ghrelease-v1.0.0-linux.asc ghrelease-v1.0.0-linux
+      gpg: Signature made Wed 14 Nov 12:41:17 2018 JST
+      gpg:                using RSA key 6A74FEA692A05461
+      gpg: Good signature from "Marc CARRE (GitHub software releases) <carre.marc@gmail.com>" [ultimate]
+      ```
+
 ## Usage
 
 ```console
